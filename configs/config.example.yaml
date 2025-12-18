@@ -1,0 +1,12 @@
+# configs/config.example.yaml
+server:
+  port: 8080
+  mode: "debug" # release
+
+database:
+  # 我们先用 SQLite 快速开始，后续可换为 PostgreSQL
+  dsn: "./data/nutrition.db"
+
+jwt:
+  secret_key: "your-secret-key-change-this-in-production"
+  expiry_hours: 72
