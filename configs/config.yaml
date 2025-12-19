@@ -1,0 +1,12 @@
+database:
+  driver: "postgres"
+  host: "localhost"
+  port: 5432
+  username: "postgres"
+  password: "ljk071311"
+  dbname: "nutrition_tracker"
+  sslmode: "disable"  # 开发环境用disable，生产用require
+
+server:
+  port: 8080
+  mode: "debug"
