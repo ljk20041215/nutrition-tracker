@@ -3,7 +3,7 @@
 ## 技术栈说明 (MVP版本)
 - **语言**: Go 1.25.5 (充分利用Goroutine和Channel实现并发处理)
 - **Web框架**: Gin 1.11.0
-- **数据库**: SQLite3 (便于快速开发和部署)
+- **数据库**: PostgreSQL
 - **ORM**: GORM v1.25.0+
 - **认证**: JWT (github.com/golang-jwt/jwt/v5)
 - **日志**: Zap (go.uber.org/zap)
