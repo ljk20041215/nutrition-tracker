@@ -49,6 +49,8 @@ func Init(host, port, username, password, dbname string) error {
 		&model.User{},
 		&model.NutritionGoal{},
 		&model.Food{},
+		&model.MealRecord{},
+		&model.FoodRecord{},
 	)
 	if err != nil {
 		return fmt.Errorf("failed to migrate database: %w", err)
@@ -61,3 +63,4 @@ func Init(host, port, username, password, dbname string) error {
 func GetDB() *gorm.DB {
 	return DB
 }
+

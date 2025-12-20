@@ -63,6 +63,30 @@ func main() {
 	}
 	log.Println("✅ NutritionGoalRepository 初始化成功")
 
+	// 初始化 MealRecordRepository
+	log.Println("🔄 初始化 MealRecordRepository...")
+	mealRepo := repository.NewMealRecordRepository(db)
+	if mealRepo == nil {
+		log.Fatal("❌ MealRecordRepository 初始化失败")
+	}
+	log.Println("✅ MealRecordRepository 初始化成功")
+
+	// 初始化 FoodRepository
+	log.Println("🔄 初始化 FoodRepository...")
+	foodRepo := repository.NewFoodRepository(db)
+	if foodRepo == nil {
+		log.Fatal("❌ FoodRepository 初始化失败")
+	}
+	log.Println("✅ FoodRepository 初始化成功")
+	
+	// 初始化 FoodRecordRepository
+	log.Println("🔄 初始化 FoodRecordRepository...")
+	foodRecordRepo := repository.NewFoodRecordRepository(db)
+	if foodRecordRepo == nil {
+		log.Fatal("❌ FoodRecordRepository 初始化失败")
+	}
+	log.Println("✅ FoodRecordRepository 初始化成功")
+
 	// 6. 初始化 Service
 	log.Println("🔄 初始化 UserService...")
 	userService := service.NewUserService(userRepo)
@@ -78,6 +102,22 @@ func main() {
 		log.Fatal("❌ NutritionGoalService 初始化失败")
 	}
 	log.Println("✅ NutritionGoalService 初始化成功")
+
+	// 初始化 MealRecordService
+	log.Println("🔄 初始化 MealRecordService...")
+	mealService := service.NewMealRecordService(mealRepo, userRepo)
+	if mealService == nil {
+		log.Fatal("❌ MealRecordService 初始化失败")
+	}
+	log.Println("✅ MealRecordService 初始化成功")
+
+	// 初始化 FoodRecordService
+	log.Println("🔄 初始化 FoodRecordService...")
+	foodService := service.NewFoodRecordService(foodRecordRepo, mealRepo, userRepo, foodRepo)
+	if foodService == nil {
+		log.Fatal("❌ FoodRecordService 初始化失败")
+	}
+	log.Println("✅ FoodRecordService 初始化成功")
 
 	// 7. 初始化 Handler
 	log.Println("🔄 初始化 AuthHandler...")
@@ -102,6 +142,22 @@ func main() {
 		log.Fatal("❌ NutritionGoalHandler 初始化失败")
 	}
 	log.Println("✅ NutritionGoalHandler 初始化成功")
+
+	// 初始化 MealRecordHandler
+	log.Println("🔄 初始化 MealRecordHandler...")
+	mealHandler := handler.NewMealRecordHandler(mealService)
+	if mealHandler == nil {
+		log.Fatal("❌ MealRecordHandler 初始化失败")
+	}
+	log.Println("✅ MealRecordHandler 初始化成功")
+
+	// 初始化 FoodRecordHandler
+	log.Println("🔄 初始化 FoodRecordHandler...")
+	foodHandler := handler.NewFoodRecordHandler(foodService)
+	if foodHandler == nil {
+		log.Fatal("❌ FoodRecordHandler 初始化失败")
+	}
+	log.Println("✅ FoodRecordHandler 初始化成功")
 
 	// 9. 创建Gin引擎
 	log.Println("🔄 创建Gin引擎...")
@@ -152,11 +208,25 @@ func main() {
 		// 用户相关路由
 		protected.GET("/users/profile", userHandler.GetProfile)
 		protected.PUT("/users/profile", userHandler.UpdateProfile)
-
+	
 		// 营养目标相关路由
 		protected.GET("/goals", goalHandler.GetNutritionGoal)
 		protected.POST("/goals", goalHandler.SetNutritionGoal)
 		protected.POST("/goals/calculate", goalHandler.CalculateNutritionGoal)
+	
+		// 餐次记录相关路由
+		protected.POST("/meals", mealHandler.CreateMealRecord)
+		protected.GET("/meals", mealHandler.GetMealRecordsByDate)
+		protected.GET("/meals/:id", mealHandler.GetMealRecord)
+		protected.DELETE("/meals/:id", mealHandler.DeleteMealRecord)
+	
+		// 食物记录相关路由
+		protected.POST("/food-records", foodHandler.CreateFoodRecord)
+		protected.GET("/food-records", foodHandler.GetFoodRecordsByDate)
+		protected.GET("/food-records/meal", foodHandler.GetFoodRecordsByMeal)
+		protected.GET("/food-records/:id", foodHandler.GetFoodRecord)
+		protected.PUT("/food-records/:id", foodHandler.UpdateFoodRecord)
+		protected.DELETE("/food-records/:id", foodHandler.DeleteFoodRecord)
 	}
 
 	// 12. 启动服务器
