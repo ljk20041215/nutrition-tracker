@@ -56,6 +56,7 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 // @Success 200 {object} map[string]interface{}
 // @Router /api/v1/users/profile [put]
 func (h *UserHandler) UpdateProfile(c *gin.Context) {
+	// 从认证中间件设置的上下文中获取用户ID
 	userID, exists := c.Get("user_id")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "用户未认证"})
@@ -64,7 +65,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 
 	var req service.UpdateProfileRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "请求参数无效"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "请求参数错误: " + err.Error()})
 		return
 	}
 
@@ -94,3 +95,4 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 //		"note":    "实际应用中需要添加密码确认和二次验证",
 //	})
 //}
+

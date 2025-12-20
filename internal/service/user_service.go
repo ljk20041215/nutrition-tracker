@@ -98,7 +98,12 @@ func (s *userService) Login(ctx context.Context, req *LoginRequest) (*LoginRespo
 
 // UpdateProfileRequest 更新资料请求
 type UpdateProfileRequest struct {
-	Nickname string `json:"nickname"`
+	Nickname      string  `json:"nickname"`
+	Gender        int     `json:"gender"`
+	Age           int     `json:"age"`
+	Height        float64 `json:"height"`
+	Weight        float64 `json:"weight"`
+	ActivityLevel int     `json:"activity_level"`
 }
 
 // internal/service/user_service.go 中的相关方法
@@ -124,6 +129,26 @@ func (s *userService) UpdateProfile(ctx context.Context, userID string, req *Upd
 	if req.Nickname != "" {
 		user.Nickname = req.Nickname
 	}
+	// 更新性别
+	if req.Gender != 0 {
+		user.Gender = req.Gender
+	}
+	// 更新年龄 (年龄应为正数)
+	if req.Age > 0 {
+		user.Age = req.Age
+	}
+	// 更新身高 (身高应为正数)
+	if req.Height > 0 {
+		user.Height = req.Height
+	}
+	// 更新体重 (体重应为正数)
+	if req.Weight > 0 {
+		user.Weight = req.Weight
+	}
+	// 更新活动水平 (活动水平应为1-5)
+	if req.ActivityLevel >= 1 && req.ActivityLevel <= 5 {
+		user.ActivityLevel = req.ActivityLevel
+	}
 
 	// 3. 保存更新
 	return s.userRepo.Update(ctx, user)
@@ -139,3 +164,4 @@ func checkPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
+

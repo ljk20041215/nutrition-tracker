@@ -55,6 +55,14 @@ func main() {
 	}
 	log.Println("✅ UserRepository 初始化成功")
 
+	// 初始化 NutritionGoalRepository
+	log.Println("🔄 初始化 NutritionGoalRepository...")
+	goalRepo := repository.NewNutritionGoalRepository(db)
+	if goalRepo == nil {
+		log.Fatal("❌ NutritionGoalRepository 初始化失败")
+	}
+	log.Println("✅ NutritionGoalRepository 初始化成功")
+
 	// 6. 初始化 Service
 	log.Println("🔄 初始化 UserService...")
 	userService := service.NewUserService(userRepo)
@@ -62,6 +70,14 @@ func main() {
 		log.Fatal("❌ UserService 初始化失败")
 	}
 	log.Println("✅ UserService 初始化成功")
+
+	// 初始化 NutritionGoalService
+	log.Println("🔄 初始化 NutritionGoalService...")
+	goalService := service.NewNutritionGoalService(goalRepo, userRepo)
+	if goalService == nil {
+		log.Fatal("❌ NutritionGoalService 初始化失败")
+	}
+	log.Println("✅ NutritionGoalService 初始化成功")
 
 	// 7. 初始化 Handler
 	log.Println("🔄 初始化 AuthHandler...")
@@ -78,6 +94,14 @@ func main() {
 		log.Fatal("❌ UserHandler 初始化失败")
 	}
 	log.Println("✅ UserHandler 初始化成功")
+
+	// 初始化 NutritionGoalHandler
+	log.Println("🔄 初始化 NutritionGoalHandler...")
+	goalHandler := handler.NewNutritionGoalHandler(goalService)
+	if goalHandler == nil {
+		log.Fatal("❌ NutritionGoalHandler 初始化失败")
+	}
+	log.Println("✅ NutritionGoalHandler 初始化成功")
 
 	// 9. 创建Gin引擎
 	log.Println("🔄 创建Gin引擎...")
@@ -128,6 +152,11 @@ func main() {
 		// 用户相关路由
 		protected.GET("/users/profile", userHandler.GetProfile)
 		protected.PUT("/users/profile", userHandler.UpdateProfile)
+
+		// 营养目标相关路由
+		protected.GET("/goals", goalHandler.GetNutritionGoal)
+		protected.POST("/goals", goalHandler.SetNutritionGoal)
+		protected.POST("/goals/calculate", goalHandler.CalculateNutritionGoal)
 	}
 
 	// 12. 启动服务器
@@ -135,6 +164,8 @@ func main() {
 	log.Println("📝 注册接口: POST http://localhost:8080/api/v1/auth/register")
 	log.Println("🔑 登录接口: POST http://localhost:8080/api/v1/auth/login")
 	log.Println("🧪 数据库测试: GET http://localhost:8080/api/v1/test/db")
+	log.Println("🎯 营养目标接口: GET/POST http://localhost:8080/api/v1/goals")
+	log.Println("⚡ 计算营养目标接口: POST http://localhost:8080/api/v1/goals/calculate")
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatalf("❌ 服务器启动失败: %v", err)
